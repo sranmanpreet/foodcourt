@@ -1,0 +1,18 @@
+{
+    "development": {
+        "PORT": 3000,
+        "MONGODB_URI": "mongodb://localhost:27017/foodcourt?authSource=foodcourt",
+        "MONGODB_USER": "fcAdmin",
+        "MONGODB_PASS": "fcAdmin",
+        "EXPRESS_SESSION_SECRET": "SECRET@098",
+        "SESSION_NAME": "sidms",
+        "SESS_LIFETIME": 8640000
+    },
+    "production": {
+        "PORT": 80,
+        "MONGODB_URI": "mongodb://xxxxxx/foodcourt",
+        "EXPRESS_SESSION_SECRET": "SECRET@098",
+        "SESSION_NAME": "sidms",
+        "SESS_LIFETIME": 8640000
+    }
+}
