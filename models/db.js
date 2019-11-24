@@ -14,3 +14,5 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 require('./food.model');
 require('./menu.model');
+require('./cartItem.model');
+require('./cart.model');

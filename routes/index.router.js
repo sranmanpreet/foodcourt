@@ -4,6 +4,7 @@ const csrf = require('csurf');
 
 const ctrlFood = require('../controllers/food.controller');
 const ctrlMenu = require('../controllers/menu.controller');
+const ctrlCart = require('../controllers/cart.controller');
 
 router.get('/test', (req, res, next) => {
     res.status(200).send('Success route connection');
@@ -22,5 +23,10 @@ router.get('/menus', ctrlMenu.getAllMenus);
 router.get('/menu/:name', ctrlMenu.getMenuByName);
 router.post('/menu', ctrlMenu.addMenu);
 router.delete('/menu/:name', ctrlMenu.deleteMenu);
+
+// Cart routes
+router.post('/cart/add', ctrlCart.addCartItem);
+router.get('/cart', ctrlCart.getCart);
+router.delete('/cart', ctrlCart.deleteCart);
 
 module.exports = router;
