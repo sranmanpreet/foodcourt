@@ -1,4 +1,4 @@
-# foodcourt
+# Foodcourt
 Food Court Queue Management NodeJS app
 
 Manages orders in a food court.
