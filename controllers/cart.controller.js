@@ -16,16 +16,15 @@ module.exports.getCart = (req, res, next) => {
                 res.status(200).json();
 
         }).populate({
-            path: 'items',
+            path: 'cartItems',
             populate: {
-                path: 'item'
+                path: 'foodItem'
             }
         });
     } else {
         res.status(200).json();
     }
 }
-
 
 module.exports.addCartItem = async(req, res, next) => {
     const item = req.body.food_id;
@@ -36,14 +35,25 @@ module.exports.addCartItem = async(req, res, next) => {
         }, async(errCart, cart) => {
             if (cart) {
                 let itemPresent = false;
-                for (let i = 0; i < cart.items.length; i++) {
-                    if (cart.items[i].item._id == item) {
+                for (let i = 0; i < cart.cartItems.length; i++) {
+                    if (cart.cartItems[i].foodItem._id == item) {
                         itemPresent = true;
-                        await CartItem.findOneAndUpdate({ _id: cart.items[i]._id }, { $inc: { "quantity": quantity } });
+                        await CartItem.findOneAndUpdate({ _id: cart.cartItems[i]._id }, { $inc: { "quantity": quantity } });
 
                         cart.save((err, updatedCart) => {
                             if (updatedCart) {
-                                return res.status(200).json(updatedCart);
+                                Cart.findOne({ _id: req.session.cartId }, (err, cart) => {
+                                    if (cart) {
+                                        return res.status(200).send(cart);
+                                    } else {
+                                        return res.send(err);
+                                    }
+                                }).populate({
+                                    path: 'cartItems',
+                                    populate: {
+                                        path: 'foodItem'
+                                    }
+                                });
                             } else {
                                 return res.status(201).json({
                                     status: false,
@@ -57,7 +67,7 @@ module.exports.addCartItem = async(req, res, next) => {
 
                 if (!itemPresent) {
                     let newCartItem = new CartItem({
-                        item: req.body.food_id,
+                        foodItem: req.body.food_id,
                         quantity: req.body.quantity
                     });
                     newCartItem.save((err, cartItem) => {
@@ -67,10 +77,21 @@ module.exports.addCartItem = async(req, res, next) => {
                             newCartItem = cartItem;
                         }
                     });
-                    cart.items.push(newCartItem);
+                    cart.cartItems.push(newCartItem);
                     cart.save((err, updatedCart) => {
                         if (updatedCart) {
-                            return res.status(200).json(updatedCart);
+                            Cart.findOne({ _id: req.session.cartId }, (err, cart) => {
+                                if (cart) {
+                                    return res.status(200).send(cart);
+                                } else {
+                                    return res.send(err);
+                                }
+                            }).populate({
+                                path: 'cartItems',
+                                populate: {
+                                    path: 'foodItem'
+                                }
+                            });
                         } else {
                             return res.status(500).json({
                                 status: false,
@@ -98,10 +119,15 @@ module.exports.addCartItem = async(req, res, next) => {
                     }
                 });
             }
-        }).populate('items');
+        }).populate({
+            path: 'cartItems',
+            populate: {
+                path: 'foodItem'
+            }
+        });
     } else {
         let newCartItem = new CartItem({
-            item: req.body.food_id,
+            foodItem: req.body.food_id,
             quantity: req.body.quantity
         });
         await newCartItem.save((err, cartItem) => {
@@ -113,9 +139,13 @@ module.exports.addCartItem = async(req, res, next) => {
         });
 
         let newCart = new Cart({
-            items: [newCartItem._id]
+            cartItems: [newCartItem._id]
         });
-        await newCart.calculateTotal([newCartItem._id]).then(x => newCart.total = x);
+        await newCart.calculateTotal([newCartItem._id]).then(
+            (x) => {
+                newCart.total = x;
+                console.log(x);
+            });
         newCart.save((errCartSave, cart) => {
             if (errCartSave) return res.status(500).json({
                 status: false,
@@ -124,7 +154,18 @@ module.exports.addCartItem = async(req, res, next) => {
             });
             else {
                 req.session.cartId = cart._id;
-                return res.status(200).send(cart);
+                Cart.findOne({ _id: cart._id }, (err, cartFinal) => {
+                    if (cartFinal) {
+                        return res.status(200).send(cartFinal);
+                    } else {
+                        return res.send(err);
+                    }
+                }).populate({
+                    path: 'cartItems',
+                    populate: {
+                        path: 'foodItem'
+                    }
+                });
             }
         });
     }
@@ -135,7 +176,7 @@ module.exports.deleteCart = async(req, res, next) => {
     if (req.session.cartId) {
         await Cart.findOne({ _id: req.session.cartId }, async(err, cart) => {
             if (cart) {
-                for (const cartItem in cart.items) {
+                for (const cartItem in cart.cartItems) {
                     await CartItem.deleteOne({ _id: cartItem });
                 }
             }

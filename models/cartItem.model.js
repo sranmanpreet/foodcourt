@@ -7,7 +7,7 @@ const CartItemSchema = mongoose.Schema({
         type: Number,
         required: "Quantity can't be empty"
     },
-    item: {
+    foodItem: {
         type: mongoose.Schema.Types.ObjectId,
         ref: Food
     }

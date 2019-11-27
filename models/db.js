@@ -16,3 +16,5 @@ require('./food.model');
 require('./menu.model');
 require('./cartItem.model');
 require('./cart.model');
+require('./order.model');
+require('./feedback.model');
