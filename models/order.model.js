@@ -31,7 +31,8 @@ const OrderSchema = mongoose.Schema({
     },
     paymentReferenceId: {
         type: String
-    }
+    },
+    userId: String
 });
 
 //Events

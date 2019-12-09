@@ -21,9 +21,42 @@ module.exports.createFeedback = (req, res, next) => {
     });
 }
 
+module.exports.createFeedback_chatbot = (req, res, next) => {
+    let newFeedback = new Feedback({
+        order: req.body.orderId,
+        rating: req.body.rating
+    });
+
+    newFeedback.save((err, request) => {
+        if (err) {
+            return res.status(500).json({
+                status: false,
+                error: err.message
+            });
+        } else {
+            return res.status(200).json(request);
+        }
+    });
+}
+
 module.exports.getFeedback = (req, res, next) => {
     Feedback.findOne({
         order: req.session.orderId
+    }, (err, feedback) => {
+        if (err) {
+            return res.status(400).json({
+                status: false,
+                message: err.message + " ErrorCode-6102"
+            });
+        } else {
+            return res.status(200).json(feedback);
+        }
+    }).populate('order');
+}
+
+module.exports.getFeedback_chatbot = (req, res, next) => {
+    Feedback.findOne({
+        order: req.query.orderId
     }, (err, feedback) => {
         if (err) {
             return res.status(400).json({

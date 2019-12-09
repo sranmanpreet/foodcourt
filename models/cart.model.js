@@ -10,7 +10,8 @@ const CartSchema = mongoose.Schema({
     }],
     total: {
         type: Number
-    }
+    },
+    userId: String
 });
 
 //Events
@@ -36,7 +37,6 @@ CartSchema.methods.calculateTotal = async(cartItems) => {
                     cartItemO = cartItem;
                     quantity = cartItem.quantity;
                 } else {
-                    console.log('in else first');
                     console.log(err);
                 }
             });
@@ -46,7 +46,6 @@ CartSchema.methods.calculateTotal = async(cartItems) => {
                     if (food) {
                         unitPrice = food.unitPrice;
                     } else {
-                        console.log('in else second');
                         console.log(err);
                     }
                 });

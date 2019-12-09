@@ -7,6 +7,7 @@ const express = require('express');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 
+const rtsChatbot = require('./routes/chatbot.router');
 const rtsIndex = require('./routes/index.router');
 
 var app = express();
@@ -40,6 +41,7 @@ app.use((err, req, res, next) => {
     }
 });
 
+app.use('/api/chat', rtsChatbot);
 app.use('/api', rtsIndex);
 
 app.listen(process.env.PORT, () => console.log('Server started at port :' + process.env.PORT));

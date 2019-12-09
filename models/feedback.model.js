@@ -7,7 +7,10 @@ const Feedback = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: Order
     },
-    rating: Number,
+    rating: {
+        required: true,
+        type: Number
+    },
     createdDate: {
         type: Date
     }
