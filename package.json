@@ -9,7 +9,7 @@
     "author": "Manpreet Singh",
     "license": "ISC",
     "dependencies": {
-        "async": "^3.1.0",
+        "async": "^3.2.2",
         "body-parser": "^1.19.0",
         "connect-flash": "^0.1.1",
         "connect-mongo": "^3.0.0",
